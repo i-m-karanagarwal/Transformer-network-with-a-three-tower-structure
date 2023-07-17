@@ -6,13 +6,12 @@ from scipy import signal
 from scipy.signal import butter, lfilter
 import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
-# DATASET: https://physionet.org/pn6/chbmit/
 sampleRate = 256
 pathDataSet = ''# path of the dataset
 FirstPartPathOutput='' #path where the segments will be saved
 
 # patients = ["01", "02", "03","05","06","07","08","10","23","24"]
-patients = ["14"]
+patients = ["02"]
 channels=18
 
 signalsBlock=None
