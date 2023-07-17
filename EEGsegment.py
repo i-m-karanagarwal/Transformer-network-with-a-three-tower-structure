@@ -35,13 +35,13 @@ def loadParametersFromFile(filePath):
                 if (line.split(":")[0] == "FirstPartPathOutput"):
                     FirstPartPathOutput = line.split(":")[1].strip()
 
-#创建指向索引等于索引的患者文件的指针
+#Create pointer to patient file with index equal to index
 def loadSummaryPatient(index):
     f = open(pathDataSet+'/chb'+patients[index]+'/chb'+patients[index]+'-summary.txt', 'r')
     return f
 
-# 将表示时间的字符串转换为日期时间对象
-# 和清理不符合小时限制的日期
+# Converts a string representing a time to a datetime object
+# and clean up dates that don't meet the hour limit
 def getTime(dateInString):
     time=0
     try:
@@ -58,14 +58,14 @@ def getTime(dateInString):
             time += timedelta(hours=2)
     return time
 
-#用于表示 Preictal 和 Interictal 数据范围的类
+# used to represent Preictal and Interictal data range class
 class PreIntData:
     start=0
     end=0
     def __init__(self, s, e):
         self.start=s
         self.end=e
-# 用于保存文件数据、开始和结束日期和时间以及相关文件名的类
+# Class for saving file data, start and end dates and times, and associated filenames
 class FileData:
     start=0
     end=0
@@ -75,15 +75,15 @@ class FileData:
         self.end=e
         self.nameFile=nF
 
-# 将分析的患者的所有有用数据加载到内存中的功能
-# 指向已分析患者的摘要文件的指针
+# Function to load all useful data of the analyzed patient into memory
+# pointer to the summary file for the analyzed patient
 def createArrayIntervalData(fSummary):
     preictal = []
     interictal = []
     interictal.append(PreIntData(datetime.min, datetime.max))
     files = []
     firstTime = True
-    oldTime = datetime.min  # 相当于日期中的 0
+    oldTime = datetime.min  # is equivalent to the date in 0
     startTime = 0
     line = fSummary.readline()
     endS = datetime.min
@@ -92,28 +92,28 @@ def createArrayIntervalData(fSummary):
         data = line.split(':')
         if (data[0] == "File Name"):
             nF = data[1].strip()
-            s = getTime((fSummary.readline().split(": "))[1].strip())  # 每个edf开始时间
+            s = getTime((fSummary.readline().split(": "))[1].strip())  # Each edf start time
             if (firstTime):
                 interictal[0].start = s
                 firstTime = False
-                startTime = s  # 每个病人开始时间
+                startTime = s  # start time per patient
                 endtime = s
-            while s < oldTime:  # 如果它每天都在变化，我会在日期上增加 24 小时
+            while s < oldTime:  # If it changes every day, I add 24 hours to the date
                 s = s + timedelta(hours=24)
             oldTime = s
-            endTimeFile = getTime((fSummary.readline().split(": "))[1].strip())  # 每个edf文件结束时间
-            while endTimeFile < oldTime:  # 如果它每天都在变化，我会在日期上增加 24 小时
+            endTimeFile = getTime((fSummary.readline().split(": "))[1].strip())  # End time of each edf file
+            while endTimeFile < oldTime:  # If it changes every day, I add 24 hours to the date
                 endTimeFile = endTimeFile + timedelta(hours=24)
             oldTime = endTimeFile
             files.append(FileData(s, endTimeFile, nF))
             for j in range(0, int((fSummary.readline()).split(':')[1])):
                 secSt = int(fSummary.readline().split(': ')[1].split(' ')[0])
                 secEn = int(fSummary.readline().split(': ')[1].split(' ')[0])
-                ss = s + timedelta(seconds=secSt) - timedelta(minutes=_MINUTES_OF_PREICTAL)  # 发作前_MINUTES_OF_PREICTAL的时间
+                ss = s + timedelta(seconds=secSt) - timedelta(minutes=_MINUTES_OF_PREICTAL)  # Onset _MINUTES OF PREICTAL time
                 if (len(preictal) == 0 or ss > endS):
-                    ee = s + timedelta(seconds=secSt)  # 发作的时间
-                    preictal.append(PreIntData(ss, ee))  # 发作前30分钟到发作
-                endS = s + timedelta(seconds=secEn)  # 发作结束的时间
+                    ee = s + timedelta(seconds=secSt)  # onset time
+                    preictal.append(PreIntData(ss, ee))  # 30 minutes before onset to onset
+                endS = s + timedelta(seconds=secEn)  # time the seizure ended
                 ss = s + timedelta(seconds=secSt) - timedelta(hours=4)
                 ee = s + timedelta(seconds=secEn) + timedelta(hours=4)
                 if (interictal[len(interictal) - 1].start < ss and interictal[len(interictal) - 1].end > ee):
@@ -130,8 +130,8 @@ def createArrayIntervalData(fSummary):
 
     return preictal, interictal, files
 
-# 加载患者数据（indexPatient）。 数据取自 fileOfData 中指定名称的文件
-# 返回包含在文件中的患者数据的 numpy 向量
+# Load patient data (indexPatient). Data taken from fileOfData A file with the name specified in
+# returns the patient data contained in the file numpy vector
 def loadDataOfPatient(indexPatient, fileOfData):
     f = pyedflib.EdfReader(pathDataSet+'/chb'+patients[indexPatient]+'/'+fileOfData)   # https://pyedflib.readthedocs.io/en/latest/#description
     n = f.signals_in_file
@@ -254,7 +254,7 @@ def main():
                     break
             start = (pInfo.start - filesInfo[j].start).seconds
             if (pInfo.start <= filesInfo[j].start):
-                start = 0  # 如果 preictal 在文件开头之前开始
+                start = 0  # if preictal start before the beginning of the file
             end = None
             tmpData = []
             if (pInfo.end <= filesInfo[j].end):

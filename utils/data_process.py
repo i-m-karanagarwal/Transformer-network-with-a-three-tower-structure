@@ -12,12 +12,12 @@ class MyDataset(Dataset):
     def __init__(self,
                  dataset: str):
         """
-        训练数据集与测试数据集的Dataset对象
-        :param path: 数据集路径
-        :param dataset: 区分是获得训练集还是测试集
+        Dataset object of training dataset and testing dataset
+        :param path: dataset path
+        :param dataset: Distinguish whether to obtain a training set or a test set
         """
         super(MyDataset, self).__init__()
-        self.dataset = dataset  # 选择获取测试集还是训练集
+        self.dataset = dataset  # Choose to get the test set or the training set
         self.train_len, \
         self.test_len, \
         self.input_len, \
@@ -41,7 +41,7 @@ class MyDataset(Dataset):
         elif self.dataset == 'test':
             return self.test_len
 
-    # 数据预处理
+    # data preprocessing
     def pre_option(self):
         print(patients)
         for indexPat in range(0, len(patients)):
@@ -99,7 +99,7 @@ class MyDataset(Dataset):
             test_len = test.shape[0]
             output_len = len(tuple(set(train_label)))
 
-            # 样本 时间 通道 赫兹
+            # Sample Time Channel Hertz
 
             train = torch.Tensor(train).permute(0, 2, 1, 3)
             test = torch.Tensor(test).permute(0, 2, 1, 3)

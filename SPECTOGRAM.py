@@ -55,9 +55,9 @@ def saveSignalsOnDisk(signalsBlock,nSpectogram):
     legendOfOutput=legendOfOutput+str(nSpectogram-signalsBlock.shape[0])+' '+str(nSpectogram-1) +' '+SecondPartPathOutput+'/'+isPreictal+'_'+str(nSpectogram-signalsBlock.shape[0])+'_'+str(nSpectogram-1) +'.npy\n'
 
 
-# 将日期中包含的数据划分到窗口中并创建保存在磁盘上的频谱图
-# S 是表示每个窗口移动多远的因子
-# 不考虑返回数据，当数据不能被窗口长度整除时会发生这种情况
+# Divide the data contained in the date into windows and create a spectrogram saved on disk
+# S is a factor representing how far each window moves
+# The returned data is not considered, which happens when the data is not divisible by the window length
 def createSpectrogram(data, S=0):
     global nSpectogram
     global signalsBlock
@@ -69,7 +69,7 @@ def createSpectrogram(data, S=0):
     if (S == 0):
         movement = _SIZE_WINDOW_SPECTOGRAM
     while data.shape[1] - (t * movement + _SIZE_WINDOW_SPECTOGRAM) >= 0:
-        # 为所有通道创建光谱图
+        # Create spectrograms for all channels
         for i in range(0, channels):
             start = t * movement
             stop = start + _SIZE_WINDOW_SPECTOGRAM
@@ -85,7 +85,7 @@ def createSpectrogram(data, S=0):
         t = t + 1
     return (data.shape[1] - t * _SIZE_WINDOW_SPECTOGRAM)
 
-# 带阻滤波器
+# band stop filter
 def butter_bandstop_filter(data, lowcut, highcut, fs, order):
     nyq = 0.5 * fs
     low = lowcut / nyq
@@ -95,7 +95,7 @@ def butter_bandstop_filter(data, lowcut, highcut, fs, order):
     y = lfilter(i, u, data)
     return y
 
-# 高通滤波器
+# high pass filter
 def butter_highpass_filter(data, cutoff, fs, order=5):
     nyq = 0.5 * fs
     normal_cutoff = cutoff / nyq
@@ -104,7 +104,7 @@ def butter_highpass_filter(data, cutoff, fs, order=5):
     return y
 
 
-# 用于实际创建频谱图的函数。
+# The function used to actually create the spectrogram.
 def createSpec(data):
     fs = 256
     lowcut = 117
@@ -183,7 +183,7 @@ def main():
         loadDataPath(indexPatient)
         print("START creation interictal spectrogram")
         totInst = 0
-        isPreictal = 'I'  # 发作间期
+        isPreictal = 'I'  # Interictal
 
         for i in range(0, contI + 1):
             filesPathI = interictalpath[i]
@@ -205,7 +205,7 @@ def main():
         legendOfOutput = ''
         print("END create interictal data")
         nSpectogram = 0
-        isPreictal = 'P'  # 发作前期
+        isPreictal = 'P'  # Preictal
 
         for i in range(0, contP + 1):
             legendOfOutput = legendOfOutput + "SEIZURE " + str(i) + "\n"

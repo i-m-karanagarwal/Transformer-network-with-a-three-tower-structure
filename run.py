@@ -14,14 +14,14 @@ from loss import Myloss
 from models.transformer import Transformer
 from utils.data_process import MyDataset
 
-test_interval = 5  # 测试间隔 单位：epoch
-draw_key = 1  # 大于等于draw_key才会保存图像
+test_interval = 5  # test interval Unit: epoch
+draw_key = 1  # Greater than or equal to draw_key will save the image
 
-# 超参数设置
+# hyperparameter settings
 EPOCH = 20
 BATCH_SIZE = 100
 LR = 1e-4
-DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")  # 选择设备 CPU or GPU
+DEVICE = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")  # select device CPU or GPU
 print(f'use device: {DEVICE}')
 
 models = 512
@@ -31,9 +31,9 @@ v = 8
 h = 8
 N = 8
 dropout = 0.2
-pe = True  # # 设置的是双塔中 score=pe score=channel默认没有pe
-mask = True  # 设置的是双塔中 score=input的mask score=channel默认没有mask
-# 优化器选择
+pe = True  # # set in twin towers score=pe score=Channel has no pe by default
+mask = True  # set in twin towers score=input mask score=Channel has no mask by default
+# optimizer selection
 optimizer_name = 'Adagrad'
 
 train_dataset = MyDataset('train')
@@ -41,25 +41,25 @@ test_dataset = MyDataset('test')
 train_dataloader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True)
 test_dataloader = DataLoader(dataset=test_dataset, batch_size=BATCH_SIZE, shuffle=False)
 
-DATA_LEN = train_dataset.train_len  # 训练集样本数量
-inputs = train_dataset.input_len  # 时间部数量
-channels = train_dataset.channel_len  # 时间序列维度
-outputs = train_dataset.output_len  # 分类类别
+DATA_LEN = train_dataset.train_len  # The number of samples in the training set
+inputs = train_dataset.input_len  # Number of time units
+channels = train_dataset.channel_len  # time series dimension
+outputs = train_dataset.output_len  # classification category
 hz = train_dataset.hz  # hz
 
 net = Transformer(d_model=models, d_input=inputs, d_channel=channels, d_hz = hz, d_output=outputs, d_hidden=hiddens,
                   q=q, v=v, h=h, N=N, dropout=dropout, pe=pe, mask=mask, device=DEVICE).to(DEVICE)
 
-# 创建Transformer模型
+# Create a Transformer model
 
-# 创建loss函数 此处使用 交叉熵损失
+# Create loss function use here cross entropy loss
 loss_function = Myloss()
 if optimizer_name == 'Adagrad':
     optimizer = optim.Adagrad(net.parameters(), lr=LR)
 elif optimizer_name == 'Adam':
     optimizer = optim.Adam(net.parameters(), lr=LR)
 
-# 用于记录准确率变化
+# Used to record changes in accuracy
 correct_on_train = []
 correct_on_test = []
 sensitivity_on_train = []
@@ -70,7 +70,7 @@ precision_on_train = []
 precision_on_test = []
 recall_on_train = []
 recall_on_test = []
-# 用于记录损失变化
+# Used to record loss changes
 loss_list = []
 time_cost = 0
 net.train()
