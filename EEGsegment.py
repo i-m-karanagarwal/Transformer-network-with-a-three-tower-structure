@@ -166,8 +166,14 @@ def saveSignalsOnDisk(signalsBlock,startime,endtime):
         os.makedirs(FirstPartPathOutput)
     if not os.path.exists(FirstPartPathOutput+SecondPartPathOutput):
         os.makedirs(FirstPartPathOutput+SecondPartPathOutput)
+    # np.save(FirstPartPathOutput+SecondPartPathOutput+'/'+isPreictal+'_'+startime+'-'+endtime, signalsBlock)
+    # legendOfOutput=legendOfOutput+SecondPartPathOutput+'/'+isPreictal+'_'+startime+'-'+endtime+'.npy\n'
+    startime=startime.replace(" ","_")
+    endtime=endtime.replace(" ","_")
+    startime=startime.replace(":","_")
+    endtime=endtime.replace(":","_")
     np.save(FirstPartPathOutput+SecondPartPathOutput+'/'+isPreictal+'_'+startime+'-'+endtime, signalsBlock)
-    legendOfOutput=legendOfOutput+SecondPartPathOutput+'/'+isPreictal+'_'+startime+'-'+endtime+'.npy\n'
+    legendOfOutput=legendOfOutput+SecondPartPathOutput+'/'+isPreictal+'_'+startime+'-'+endtime +'.npy\n'
 
 def cleanData(Data, indexPatient):
     if(patients[indexPatient] in ["14","16","17","18","19","20","21","22"]):

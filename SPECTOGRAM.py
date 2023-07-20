@@ -10,7 +10,7 @@ FirstPartPathOutput1=''#path where the spectogram will be saved
 FirstPartPathOutput=''#path where the segments will be saved
 
 # patients = ["01", "02", "03","05","06","07","08","10","23","24"]
-patients = ["14"]
+patients = ["02"]
 
 channels=18
 
